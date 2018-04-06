@@ -15,9 +15,23 @@ def get_document(fname):
     return data
 
 fname = 'project_2_train/' + 'data 1_train.csv'
-f = get_document(fname)
-tokens = f.split(',') # columns
-print(tokens)
+# f = get_document(fname)
+
+f = open(fname, 'r')
+for i, line in enumerate(f):
+    if i != 0:
+        columns = line.split(',')
+        columns[1] = columns[1].replace('[comma]', '')
+        # Split the text into tokens
+        tokens = columns[1].split()
+        # remove punctuation from each token
+        table = str.maketrans('', '', string.punctuation)
+        tokens = [w.translate(table) for w in tokens]
+        print(columns)
+        if i == 4:
+            break
+
+# tokens = f.split(',') # columns
 # remove punctuations
 # table = str.maketrans('', '', string.punctuation)
 # print(table)
