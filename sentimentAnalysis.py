@@ -193,7 +193,7 @@ t_accracy = 0
 t_recall = 0
 t_f1_score = 0
 clf = svm.SVC()
-KFold(n_splits = 10, random_state = None, shuffle = False)
+# KFold(n_splits = 10, random_state = None, shuffle = False)
 for train_index, test_index in kf.split(X):
     print("TRAIN:", train_index, "TEST:", test_index)
     X_train, X_test = X[train_index], X[test_index]

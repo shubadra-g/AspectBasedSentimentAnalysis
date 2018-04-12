@@ -8,17 +8,22 @@ Created on Fri Apr  6 16:09:25 2018
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 from nltk.tokenize import word_tokenize
+import numpy as np
 import string
 import re
+from functools import reduce
 
 find = lambda searchList, elem: [[i for i, x in enumerate(searchList) if x == e] for e in elem]
-fname = 'project_2_train/' + 'data 2_train.csv'
+fname = 'project_2_train/' + 'dara 1_train.csv'
 
 stopwords_set = set(stopwords.words('english'))
 stopwords_set = {'i', 'shan', 'just', 'how', 'each', 'out', 'themselves', 'their', 'before', 'were', 'very', 'as', 'further', 'his', 'a', 'once', 'youve', 'y', 'is', 'shouldve', 'youll', 'on', 'd', 'm', 'under', 'haven', 'which', 'only', 'them', 'was', 'by', 'needn', 'whom', 'that', 'when', 's', 'isn', 'its', 'no', 'wasn', 'in', 'we', 'theirs', 'those', 'this', 'having', 'and', 'ain', 'most', 'up', 'off', 'being', 'aren', 'shouldn', 'ourselves', 'from', 'down', 'herself', 'her', 'you', 'are', 'its', 'who', 'the', 'here', 'where', 'your', 'youd', 'she', 'didn', 'weren', 'about', 'has', 'our', 'an', 'yourselves', 'or', 'hasn', 'again', 'while', 'does', 'him', 'shes', 'above', 'below', 'itself', 'to', 'through', 'will', 'couldn', 'hers', 'they', 'doing', 'because', 'he', 'what', 'such', 'youre', 'nor', 'too', 'should', 'ours', 'then', 'himself', 'all', 'of', 'mightn', 'between', 'now', 'against', 'some', 'with', 'until', 'am', 'other', 'at', 'can', 'over', 'mustn', 'wouldn', 'do', 'for', 'after', 'hadn', 'me', 'been', 'same', 'doesn', 'my', 'these', 'll', 'did', 'had', 'it', 'so', 'ma', 'during', 'than', 'o', 'yourself', 'own', 'have', 're', 've', 'be', 'why', 't', 'there', 'more', 'won', 'yours', 'few', 'into', 'thatll', 'any', 'myself', 'both', 'don', 'if'}
 # print(stopwords_set)
 # stopwords_set.remove('but')
 # stopwords_set.remove('not')
+
+sentence_weights = []
+X, Y, X1 = [], [], []
 
 f = open(fname, 'r')
 for i, line in enumerate(f):
@@ -91,7 +96,7 @@ for i, line in enumerate(f):
         ''' New column to specify the aspect term location in the list '''
         columns.append([])
         # columns[5] = []
-        ''' for multiple positions of the columns '''
+        ''' for multiple positions of aspect term '''
         for elem in columns[3]:
             if elem[0] == 0: #start index of the 1st occurance of the aspect term
                 columns[5].append([0])
@@ -143,16 +148,17 @@ for i, line in enumerate(f):
                         # print(line)
                         # print(word_wt_list)
                         word_2[1] = 0
+                    elif word_1[1] == word_2[1]:
+                        word_2[1] = 0
 
 
         ''' For removing duplicate words - they have weight zero now'''
         word_wt_list = [elem for elem in word_wt_list if elem[1] != 0]
 
-
         if len(columns[2]) > 1 and len(columns[5]) > 1:
-            print(line)
-            print(columns)
-            print(word_wt_list)
+            # print(line)
+            # print(columns)
+            # print(word_wt_list)
             pass
 
         if columns[0] == '2911_0':
@@ -163,6 +169,54 @@ for i, line in enumerate(f):
             # break
             pass
 
+        '''Removing new line character from columns[4] -  the polarity column'''
+        columns[4] = columns[4].rstrip('\n')
+        X.append(columns[1])
+        X1.append(' '.join(columns[1]))
+
+        Y.append(columns[4])
+        sentence_weights.append(word_wt_list)
+
+
+'''Building vocabulary and counting word occurances'''
+X_reduced = reduce(lambda x1, x2: x1 + x2, X)
+vocab = list(set(X_reduced))
+weight_v = np.zeros_like(vocab, dtype = np.float_)
+weight_x = []
+pf = open('weightxy_data1.csv', 'w')
+
+pf.write(','.join(vocab))
+pf.write(',class_')
+pf.write('\n')
+for i, sentence in enumerate(sentence_weights):
+    for word in sentence:
+        v_index = vocab.index(word[0])
+        weight_v[v_index] = word[1]
+
+    weight_x.append(weight_v)
+    if len(sentence) != weight_v[np.where(weight_v > 0)].shape[0]:
+        print(sentence)
+        print(len(sentence))
+        print(weight_v[np.where(weight_v > 0)])
+
+    ''' code to write the data to file '''
+    temp = [str(j) for j in weight_v.tolist()]
+    pf.write(','.join(temp))
+    pf.write(','+str(Y[i]))
+    pf.write('\n')
+    weight_v = np.zeros_like(weight_v)
+
+pf.close()
+weight_x = np.array(weight_x)
+
+print(weight_x.shape)
+
+f.close()
+
+
+
+# weight_X2 = np.reshape(weight_X, (len(Y) ,weight_X.shape[0]))
+# print(weight_X2.shape)
 # tokens = f.split(',') # columns
 # remove punctuations
 # table = str.maketrans('', '', string.punctuation)
