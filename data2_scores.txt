@@ -1,0 +1,84 @@
+*** Scores for MNB: ***
+Pr, Re scores wrt each class
+             precision    recall  f1-score   support
+
+          0       0.60      0.60      0.60       234
+          1       0.42      0.36      0.39       190
+         -1       0.82      0.85      0.83       657
+
+avg / total       0.70      0.71      0.71      1081
+
+
+
+Model Accuracy is: 71.0453%
+
+
+Precision Score is: 70.1276%
+
+
+Recall Score is: 71.0453%
+
+
+F1-Score is: 70.5327%
+
+*** Scores for Random Forest: ***
+Pr, Re scores wrt each class
+             precision    recall  f1-score   support
+
+          0       0.00      0.00      0.00       234
+          1       0.00      0.00      0.00       190
+         -1       0.61      1.00      0.76       657
+
+avg / total       0.37      0.61      0.46      1081
+
+
+
+Model Accuracy is: 60.7771%
+
+
+Precision Score is: 36.9385%
+
+
+Recall Score is: 60.7771%
+
+
+F1-Score is: 45.9500%
+
+
+*** Scores for Ada Boost: ***
+Pr, Re scores wrt each class
+             precision    recall  f1-score   support
+
+          0       0.53      0.48      0.50       234
+          1       0.42      0.26      0.32       190
+         -1       0.75      0.86      0.81       657
+
+avg / total       0.65      0.67      0.65      1081
+
+
+
+Model Accuracy is: 67.4376%
+
+
+Precision Score is: 64.6902%
+
+
+Recall Score is: 67.4376%
+
+
+F1-Score is: 65.4633%
+
+*** Scores for Gaussian NB: ***
+
+
+Model Accuracy is: 54.4866%
+
+
+Precision Score is: 65.2257%
+
+
+Recall Score is: 54.4866%
+
+
+F1-Score is: 57.1975%
+

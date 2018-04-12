@@ -10,8 +10,19 @@ from nltk.tokenize import RegexpTokenizer
 from nltk.tokenize import word_tokenize
 import string
 import re
+from sklearn.feature_extraction.text import CountVectorizer
+from functools import reduce
+from sklearn.model_selection import KFold, train_test_split
+import numpy as np
+from sklearn import svm
+from sklearn.metrics import accuracy_score
+import pickle
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
 
 find = lambda searchList, elem: [[i for i, x in enumerate(searchList) if x == e] for e in elem]
+pfname = 'project_2_train/' + 'parsed_data.txt'
 fname = 'project_2_train/' + 'data 2_train.csv'
 
 stopwords_set = set(stopwords.words('english'))
@@ -19,10 +30,14 @@ stopwords_set = {'i', 'shan', 'just', 'how', 'each', 'out', 'themselves', 'their
 # print(stopwords_set)
 # stopwords_set.remove('but')
 # stopwords_set.remove('not')
+pf = open(pfname, 'w')
 
+X, Y, X1 = [], [], []
+# print(X, Y)
 f = open(fname, 'r')
 for i, line in enumerate(f):
     if i != 0:
+        # print('Processing data...')
         ''' Splitting the columns based on comma - since it is csv'''
         columns = line.split(',')
 
@@ -37,13 +52,14 @@ for i, line in enumerate(f):
         columns[2] = columns[2].replace('/', ' ')
 
         ''' NOt used anymore'''
-        tokenizer = RegexpTokenizer(r'\w+') # doesn't work if the special char is in the token
+        # tokenizer = RegexpTokenizer(r'\w+') # doesn't work if the special char is in the token
         # columns[2] = tokenizer.tokenize(columns[2].lower())
 
         '''Tokenize the words'''
         columns[1] = word_tokenize(columns[1])
         columns[2] = word_tokenize(columns[2])
 
+        '''For sentence'''
         for j, elem in enumerate(columns[1]):
             '''Remove special characters'''
             columns[1][j] = re.sub('[^0-9a-zA-Z]+', '', elem).lower()
@@ -51,6 +67,7 @@ for i, line in enumerate(f):
             if columns[1][j] == 'nt':
                 columns[1][j] = 'not'
 
+        '''For aspect term'''
         for j, elem in enumerate(columns[2]):
             '''Remove special characters'''
             columns[2][j] = re.sub('[^0-9a-zA-Z]+', '', elem).lower()
@@ -105,27 +122,96 @@ for i, line in enumerate(f):
             for k in range(len(columns[2])-1): # if multiple words in the aspect term - tag the following words in the sentence
                 columns[5][-1].append(columns[5][-1][-1]+1)
 
-        ''' if not found the aspect term location in the list then do '''
+        ''' if not found the aspect term location in the list then do'''
         if len(columns[5]) < 1:
             print(line)
             print(columns)
             pass
 
-        if i == 10:
-            break
-            # pass
+        # if i == 10:
+        #     # break
+        #     pass
+        # # print('***********')
+        '''Removing new line character from columns[4] -  the polarity column'''
+        columns[4] = columns[4].rstrip('\n')
+        X.append(columns[1])
+        X1.append(' '.join(columns[1]))
 
-# tokens = f.split(',') # columns
-# remove punctuations
-# table = str.maketrans('', '', string.punctuation)
-# print(table)
-# tokens = [w.translate(table) for w in tokens]
-# # remove tokens that are not alphbetic
-# tokens = [word for word in tokens if word.isalpha()]
-#
-# # remove stop words
-# stop_words = set(stopwords.words('english'))
-# tokens = [w for w in tokens if not w in stop_words]
-# # filter out short tokens
-# tokens = [word for word in tokens if len(word) > 1]
-# print(tokens)
+        Y.append(columns[4])
+
+        # exit()
+        # print("Values in X: \n\n", X)
+        # print("Values in Y: \n\n", Y)
+
+'''Building vocabulary and counting word occurances'''
+X_reduced = reduce(lambda x1, x2: x1 + x2, X)
+X_ = list(set(X_reduced))
+# print(len(X_), "b")
+# print(X_)
+count_vect = CountVectorizer(vocabulary = X_)
+X_train_counts = count_vect.fit_transform(X1).toarray()
+for i, xval in enumerate(X_train_counts):
+    temp = [str(j) for j in xval]
+    pf.write(','.join(temp)) #.join(str(Y[i])))
+    # print('')
+    pf.write(','+str(Y[i]))
+    pf.write('\n')
+    #
+pf.close()
+exit()
+# print(len(X[1122]), len(X_train_counts))
+# print("~~~~~~~~~~~~")
+# print(X_train_counts)
+# print(len(X_train_counts[10]), "c")
+# count = 0
+# print("~~~~~~~~~~~~////////////////////////")
+# for val in X_train_counts[1122]:
+#     if val == 1:
+#         count += 1
+# print(count)
+# print("~~~~~~~~~~~~////////////////////////")
+# exit()
+# print(X_train_counts)
+X_train, X_test, label_train, label_test = train_test_split(X, Y, test_size = 0.2, random_state = 42)
+'''K-Fold Cross Validation'''
+kf = KFold(n_splits = 10)
+# print(kf.get_n_splits(X))
+# print(kf)
+X = np.asarray(X_train_counts)
+# print(X[0])
+# X_train, X_test = np.asarray(X_train), np.asarray(X_test)
+# Y_train, Y_test = np.asarray(Y_train), np.asarray(Y_test)
+Y = np.asarray(Y)
+# Y = Y.transpose()
+# print(X.shape, np.size(X))
+# print(Y.shape, np.size(Y))
+
+''' Using SVM to classify'''
+# Declaring variables for scores
+t_precision = 0
+t_accracy = 0
+t_recall = 0
+t_f1_score = 0
+clf = svm.SVC()
+KFold(n_splits = 10, random_state = None, shuffle = False)
+for train_index, test_index in kf.split(X):
+    print("TRAIN:", train_index, "TEST:", test_index)
+    X_train, X_test = X[train_index], X[test_index]
+    Y_train, Y_test = Y[train_index], Y[test_index]
+    clf.fit(X_train, Y_train)
+    t_pred = clf.predict(X_test)
+    mod_accracy = accuracy_score(Y_test, t_pred)
+    t_accracy += mod_accracy
+    pr = precision_score(Y_test, t_pred, average='weighted')
+    re = recall_score(Y_test, t_pred, average='weighted')
+    f1_s = f1_score(Y_test, t_pred, average='weighted')
+    t_precision += pr
+    t_recall += re
+    t_f1_score += f1_s
+    t_accracy += mod_accracy
+
+print('\n\nModel Accuracy is: ', (mod_accracy/10))
+print('\n\nPrecision Score is: ', (t_precision/10))
+print('\n\nRecall Score is: ', (t_recall/10))
+print('\n\nF1-Score is: ', (t_f1_score/10))
+save_model = pickle.dumps(clf)
