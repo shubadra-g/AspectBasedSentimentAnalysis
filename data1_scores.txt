@@ -1,0 +1,121 @@
+*** Scores for SVM: ***
+Pr, Re scores wrt each class
+             precision    recall  f1-score   support
+
+          0       0.00      0.00      0.00       264
+          1       0.00      0.00      0.00       131
+         -1       0.43      1.00      0.60       299
+
+avg / total       0.19      0.43      0.26       694
+
+
+
+Model Accuracy is: 43.0836%
+
+
+Precision Score is: 18.5619%
+
+
+Recall Score is: 43.0836%
+
+
+F1-Score is: 25.9456%
+
+
+*** Scores for MNB: ***
+Pr, Re scores wrt each class
+             precision    recall  f1-score   support
+
+          0       0.72      0.72      0.72       264
+          1       0.47      0.37      0.42       131
+         -1       0.72      0.78      0.75       299
+
+avg / total       0.67      0.68      0.68       694
+
+
+
+Model Accuracy is: 68.1556%
+
+
+Precision Score is: 67.1848%
+
+
+Recall Score is: 68.1556%
+
+
+F1-Score is: 67.5159%
+
+*** Scores for Random Forest: ***
+Pr, Re scores wrt each class
+             precision    recall  f1-score   support
+
+          0       0.71      0.06      0.12       264
+          1       1.00      0.02      0.03       131
+         -1       0.44      0.99      0.61       299
+
+avg / total       0.65      0.45      0.31       694
+
+
+
+Model Accuracy is: 45.2450%
+
+
+Precision Score is: 64.8478%
+
+
+Recall Score is: 45.2450%
+
+
+F1-Score is: 31.3453%
+
+
+*** Scores for Ada Boost: ***
+Pr, Re scores wrt each class
+             precision    recall  f1-score   support
+
+          0       0.61      0.78      0.68       264
+          1       0.41      0.30      0.34       131
+         -1       0.77      0.66      0.71       299
+
+avg / total       0.64      0.64      0.63       694
+
+
+
+Model Accuracy is: 63.8329%
+
+
+Precision Score is: 63.7805%
+
+
+Recall Score is: 63.8329%
+
+
+F1-Score is: 63.0644%
+
+
+
+*** Scores for Gaussian NB: ***
+Pr, Re scores wrt each class
+             precision    recall  f1-score   support
+
+          0       0.72      0.50      0.59       264
+          1       0.31      0.54      0.39       131
+         -1       0.67      0.62      0.64       299
+
+avg / total       0.62      0.56      0.58       694
+
+
+
+Model Accuracy is: 56.0519%
+
+
+Precision Score is: 61.8561%
+
+
+Recall Score is: 56.0519%
+
+
+F1-Score is: 57.5934%
+
+
+
