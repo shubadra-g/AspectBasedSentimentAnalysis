@@ -12,9 +12,10 @@ import numpy as np
 import string
 import re
 from functools import reduce
+from nltk.stem import PorterStemmer
 
 find = lambda searchList, elem: [[i for i, x in enumerate(searchList) if x == e] for e in elem]
-fname = 'project_2_train/' + 'data 2_train.csv'
+fname = 'project_2_train/' + 'dara 1_train.csv'
 
 stopwords_set = set(stopwords.words('english'))
 stopwords_set = {'i', 'shan', 'just', 'how', 'each', 'out', 'themselves', 'their', 'before', 'were', 'very', 'as', 'further', 'his', 'a', 'once', 'youve', 'y', 'is', 'shouldve', 'youll', 'on', 'd', 'm', 'under', 'haven', 'which', 'only', 'them', 'was', 'by', 'needn', 'whom', 'that', 'when', 's', 'isn', 'its', 'no', 'wasn', 'in', 'we', 'theirs', 'those', 'this', 'having', 'and', 'ain', 'most', 'up', 'off', 'being', 'aren', 'shouldn', 'ourselves', 'from', 'down', 'herself', 'her', 'you', 'are', 'its', 'who', 'the', 'here', 'where', 'your', 'youd', 'she', 'didn', 'weren', 'about', 'has', 'our', 'an', 'yourselves', 'or', 'hasn', 'again', 'while', 'does', 'him', 'shes', 'above', 'below', 'itself', 'to', 'through', 'will', 'couldn', 'hers', 'they', 'doing', 'because', 'he', 'what', 'such', 'youre', 'nor', 'too', 'should', 'ours', 'then', 'himself', 'all', 'of', 'mightn', 'between', 'now', 'against', 'some', 'with', 'until', 'am', 'other', 'at', 'can', 'over', 'mustn', 'wouldn', 'do', 'for', 'after', 'hadn', 'me', 'been', 'same', 'doesn', 'my', 'these', 'll', 'did', 'had', 'it', 'so', 'ma', 'during', 'than', 'o', 'yourself', 'own', 'have', 're', 've', 'be', 'why', 't', 'there', 'more', 'won', 'yours', 'few', 'into', 'thatll', 'any', 'myself', 'both', 'don', 'if'}
@@ -64,8 +65,8 @@ for i, line in enumerate(f):
                 columns[2][j] = 'not'
 
         '''Remove empty string tokens'''
-        columns[1] = [x.strip() for x in columns[1] if x.strip() != '']
-        columns[2] = [x.strip() for x in columns[2] if x.strip() != '']
+        columns[1] = [x for x in columns[1] if x != '']
+        columns[2] = [x for x in columns[2] if x != '']
 
         ''' Remove stop words '''
         columns[1] = [word for word in columns[1] if word not in stopwords_set]
@@ -80,12 +81,9 @@ for i, line in enumerate(f):
         ''' Finds the location of the aspect term in the sentence '''
         for m in re.finditer(columns[2], columns[1]):
             columns[3].append([m.start(), m.end()])
-            ''' since some aspect terms are not surrounded by spaces, hence below code
-            NOT USED ANYMORE
-            '''
+            ''' since some aspect terms are not surrounded by spaces, hence below code '''
             if m.start() != 0 and columns[1][m.start() - 1] != ' ':
-                # columns[1] = columns[1][:m.start()] + ' ' + columns[1][m.start():]
-                pass
+                columns[1] = columns[1][:m.start()] + ' ' + columns[1][m.start():]
 
         ''' Because of adding space in above code, the position is messed up, hence redoing it. '''
         columns[3] = []
@@ -115,20 +113,19 @@ for i, line in enumerate(f):
 
         ''' if not found the aspect term location in the list then do '''
         if len(columns[5]) < 1:
-            continue
-
-            # pass
+            print(line)
+            print(columns)
+            pass
 
         word_wt_list = [[elem, 0] for elem in columns[1]]
-        ''' Assigning weights to every word based on the distance from the aspect term '''
         for j, elem in enumerate(columns[5]):
             for k, word in enumerate(columns[1]):
-                if k < elem[0]: # Word left to the aspect term
-                    dist = abs(elem[0] - k)
+                if k < elem[0]:
+                    dist = elem[0] - k
                     if word_wt_list[k][1] < 1/dist:
                         word_wt_list[k][1] = 1/dist
-                elif k > elem[-1]: # word right to the aspect term : Aspect term can have multiple words
-                    dist = abs(k - elem[-1])
+                elif k > elem[-1]:
+                    dist = k - elem[-1]
                     if word_wt_list[k][1] < 1/dist:
                         word_wt_list[k][1] = 1/dist
             for aspect_word_loc in elem:
@@ -185,10 +182,9 @@ for i, line in enumerate(f):
 '''Building vocabulary and counting word occurances'''
 X_reduced = reduce(lambda x1, x2: x1 + x2, X)
 vocab = list(set(X_reduced))
-print(vocab[0])
 weight_v = np.zeros_like(vocab, dtype = np.float_)
 weight_x = []
-pf = open('weightxy_data2.csv', 'w')
+pf = open('weightxy_data1.csv', 'w')
 
 pf.write(','.join(vocab))
 pf.write(',class_')
