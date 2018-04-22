@@ -14,7 +14,8 @@ import re
 from functools import reduce
 
 find = lambda searchList, elem: [[i for i, x in enumerate(searchList) if x == e] for e in elem]
-fname = 'project_2_train/' + 'data 2_train.csv'
+fname = 'project_2_train/' + 'dara 1_train.csv'
+# fname = 'project_2_train/' + 'data 2_train.csv'
 
 stopwords_set = set(stopwords.words('english'))
 stopwords_set = {'i', 'shan', 'just', 'how', 'each', 'out', 'themselves', 'their', 'before', 'were', 'very', 'as', 'further', 'his', 'a', 'once', 'youve', 'y', 'is', 'shouldve', 'youll', 'on', 'd', 'm', 'under', 'haven', 'which', 'only', 'them', 'was', 'by', 'needn', 'whom', 'that', 'when', 's', 'isn', 'its', 'no', 'wasn', 'in', 'we', 'theirs', 'those', 'this', 'having', 'and', 'ain', 'most', 'up', 'off', 'being', 'aren', 'shouldn', 'ourselves', 'from', 'down', 'herself', 'her', 'you', 'are', 'its', 'who', 'the', 'here', 'where', 'your', 'youd', 'she', 'didn', 'weren', 'about', 'has', 'our', 'an', 'yourselves', 'or', 'hasn', 'again', 'while', 'does', 'him', 'shes', 'above', 'below', 'itself', 'to', 'through', 'will', 'couldn', 'hers', 'they', 'doing', 'because', 'he', 'what', 'such', 'youre', 'nor', 'too', 'should', 'ours', 'then', 'himself', 'all', 'of', 'mightn', 'between', 'now', 'against', 'some', 'with', 'until', 'am', 'other', 'at', 'can', 'over', 'mustn', 'wouldn', 'do', 'for', 'after', 'hadn', 'me', 'been', 'same', 'doesn', 'my', 'these', 'll', 'did', 'had', 'it', 'so', 'ma', 'during', 'than', 'o', 'yourself', 'own', 'have', 're', 've', 'be', 'why', 't', 'there', 'more', 'won', 'yours', 'few', 'into', 'thatll', 'any', 'myself', 'both', 'don', 'if'}
@@ -188,7 +189,8 @@ vocab = list(set(X_reduced))
 print(vocab[0])
 weight_v = np.zeros_like(vocab, dtype = np.float_)
 weight_x = []
-pf = open('weightxy_data2.csv', 'w')
+# pf = open('weightxy_data1.csv', 'w')
+pf = open('weightxy_data1.csv', 'w')
 
 pf.write(','.join(vocab))
 pf.write(',class_')
